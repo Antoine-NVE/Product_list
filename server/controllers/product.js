@@ -18,3 +18,9 @@ exports.readProducts = (req, res) => {
         .then((products) => res.status(200).json({ products: products }))
         .catch((error) => res.status(400).json({ error }));
 };
+
+exports.readProduct = (req, res) => {
+    Product.findOne({ _id: req.params.id })
+        .then((product) => res.status(200).json({ product }))
+        .catch((error) => res.status(400).json({ error }));
+};

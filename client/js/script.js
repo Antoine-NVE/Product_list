@@ -8,12 +8,17 @@ function showMain() {
             products = response.products;
             let body = '';
             for (let i = 0; i < products.length; i++) {
+                // prettier-ignore
                 body += `
                     <tr>
                         <td>${products[i].name}</td>
                         <td>${products[i].price / 100} €</td>
                         <td>${products[i].quantity}</td>
-                        <td>Actions</td>
+                        <td>
+                            <button id="update-${i + 1}" class="btn btn-warning update" data-id="${products[i]._id}">
+                                Modifier
+                            </button>
+                        </td>
                     </tr>
                 `;
             }
@@ -36,6 +41,14 @@ function showMain() {
                     </tbody
                 </table>
             `;
+
+            const btnUpdate = document.getElementsByClassName('update');
+            for (let i = 0; i < btnUpdate.length; i++) {
+                const btn = document.getElementById(btnUpdate[i].id);
+                btn.addEventListener('click', () => {
+                    showUpdate(btn.dataset.id);
+                });
+            }
 
             const btnAdd = document.getElementById('btn-add');
             btnAdd.addEventListener('click', () => {
@@ -98,6 +111,46 @@ function showAdd() {
             })
             .catch((error) => alert(error));
     });
+}
+
+// Fonction qui affiche le formulaire de modification
+function showUpdate(id) {
+    fetch(`http://localhost:3000/api/products/${id}`)
+        .then((response) => response.json())
+        .then((response) => {
+            product = response.product;
+
+            container.innerHTML = `
+            <button id="btn-main" class="btn btn-primary mb-3">Accueil</button>
+            <form>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <input type="text" class="form-control" id="name" value=${
+                        product.name
+                    }>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Prix (€)</label>
+                    <input type="number" class="form-control" id="price" value=${
+                        product.price / 100
+                    }>
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantité</label>
+                    <input type="number" class="form-control" id="quantity" value=${
+                        product.quantity
+                    }>
+                </div>
+                <button id="btn-create" class="btn btn-primary">Valider</button>
+            </form>
+        `;
+
+            const btnMain = document.getElementById('btn-main');
+            btnMain.addEventListener('click', () => {
+                showMain();
+            });
+        })
+        .catch((error) => alert(error));
 }
 
 showMain();
