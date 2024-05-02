@@ -119,27 +119,23 @@ function showUpdate(id) {
         .then((response) => response.json())
         .then((response) => {
             product = response.product;
+            console.log(product.name);
 
+            // prettier-ignore
             container.innerHTML = `
             <button id="btn-main" class="btn btn-primary mb-3">Accueil</button>
             <form>
                 <div class="mb-3">
                     <label for="name" class="form-label">Nom</label>
-                    <input type="text" class="form-control" id="name" value=${
-                        product.name
-                    }>
+                    <input type="text" class="form-control" id="name" value="${product.name}">
                 </div>
                 <div class="mb-3">
                     <label for="price" class="form-label">Prix (€)</label>
-                    <input type="number" class="form-control" id="price" value=${
-                        product.price / 100
-                    }>
+                    <input type="number" class="form-control" id="price" value="${product.price / 100}">
                 </div>
                 <div class="mb-3">
                     <label for="quantity" class="form-label">Quantité</label>
-                    <input type="number" class="form-control" id="quantity" value=${
-                        product.quantity
-                    }>
+                    <input type="number" class="form-control" id="quantity" value="${product.quantity}">
                 </div>
                 <button id="btn-update" class="btn btn-primary">Valider</button>
             </form>
@@ -170,7 +166,7 @@ function showUpdate(id) {
                     .then((response) => response.json())
                     .then((response) => {
                         if (response.error) {
-                            console.error(error);
+                            console.error(response.error);
                         } else {
                             showMain();
                         }

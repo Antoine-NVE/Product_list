@@ -32,7 +32,8 @@ exports.updateProduct = (req, res) => {
             name: req.body.name,
             price: req.body.price,
             quantity: req.body.quantity,
-        }
+        },
+        { runValidators: true }
     )
         .then(() => res.status(200).json({ message: 'Produit modifié' }))
         .catch((error) => res.status(400).json({ error }));
