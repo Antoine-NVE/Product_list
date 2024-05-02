@@ -42,28 +42,55 @@ function showMain(products) {
 // Fonction qui affiche le formulaire d'ajout
 function showAdd() {
     container.innerHTML = `
-        <button id="btn-main" class="btn btn-primary">Accueil</button>
+        <button id="btn-main" class="btn btn-primary mb-3">Accueil</button>
         <form>
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                <label for="name" class="form-label">Nom</label>
+                <input type="text" class="form-control" id="name">
             </div>
             <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
+                <label for="price" class="form-label">Prix (€)</label>
+                <input type="number" class="form-control" id="price">
             </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantité</label>
+                <input type="number" class="form-control" id="quantity">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button id="btn-create" class="btn btn-primary">Valider</button>
         </form>
     `;
 
     const btnMain = document.getElementById('btn-main');
     btnMain.addEventListener('click', () => {
         showMain(products);
+    });
+
+    const btnCreate = document.getElementById('btn-create');
+    btnCreate.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name');
+        const price = document.getElementById('price');
+        const quantity = document.getElementById('quantity');
+
+        fetch('http://localhost:3000/api/products/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name.value,
+                price: parseInt(price.value * 100),
+                quantity: parseInt(quantity.value),
+            }),
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response.error) {
+                    console.error(response.error);
+                } else {
+                    showMain(products);
+                }
+            })
+            .catch((error) => alert(error));
     });
 }
 
