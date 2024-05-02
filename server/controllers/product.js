@@ -24,3 +24,16 @@ exports.readProduct = (req, res) => {
         .then((product) => res.status(200).json({ product }))
         .catch((error) => res.status(400).json({ error }));
 };
+
+exports.updateProduct = (req, res) => {
+    Product.updateOne(
+        { _id: req.params.id },
+        {
+            name: req.body.name,
+            price: req.body.price,
+            quantity: req.body.quantity,
+        }
+    )
+        .then(() => res.status(200).json({ message: 'Produit modifié' }))
+        .catch((error) => res.status(400).json({ error }));
+};

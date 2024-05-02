@@ -141,13 +141,41 @@ function showUpdate(id) {
                         product.quantity
                     }>
                 </div>
-                <button id="btn-create" class="btn btn-primary">Valider</button>
+                <button id="btn-update" class="btn btn-primary">Valider</button>
             </form>
         `;
 
             const btnMain = document.getElementById('btn-main');
             btnMain.addEventListener('click', () => {
                 showMain();
+            });
+
+            const btnUpdate = document.getElementById('btn-update');
+            btnUpdate.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById('name');
+                const price = document.getElementById('price');
+                const quantity = document.getElementById('quantity');
+
+                fetch(`http://localhost:3000/api/products/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name.value,
+                        price: parseInt(price.value * 100),
+                        quantity: parseInt(quantity.value),
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((response) => {
+                        if (response.error) {
+                            console.error(error);
+                        } else {
+                            showMain();
+                        }
+                    })
+                    .catch((error) => alert(error));
             });
         })
         .catch((error) => alert(error));
