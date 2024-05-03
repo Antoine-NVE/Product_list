@@ -38,3 +38,9 @@ exports.updateProduct = (req, res) => {
         .then(() => res.status(200).json({ message: 'Produit modifié' }))
         .catch((error) => res.status(400).json({ error }));
 };
+
+exports.deleteProduct = (req, res) => {
+    Product.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Produit supprimé' }))
+        .catch((error) => res.status(400).json({ error }));
+};

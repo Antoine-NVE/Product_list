@@ -18,6 +18,9 @@ function showMain() {
                             <button id="update-${i + 1}" class="btn btn-warning update" data-id="${products[i]._id}">
                                 Modifier
                             </button>
+                            <button id="delete-${i + 1}" class="btn btn-danger delete" data-id="${products[i]._id}">
+                                Supprimer
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -50,12 +53,38 @@ function showMain() {
                 });
             }
 
+            const btnDelete = document.getElementsByClassName('delete');
+            for (let i = 0; i < btnDelete.length; i++) {
+                const btn = document.getElementById(btnDelete[i].id);
+                btn.addEventListener('click', () => {
+                    if (confirm('Supprimer ce produit ?')) {
+                        fetch(
+                            `http://localhost:3000/api/products/${btn.dataset.id}`,
+                            {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                            }
+                        )
+                            .then((response) => response.json())
+                            .then((response) => {
+                                if (response.error) {
+                                    console.error(response.error);
+                                } else {
+                                    console.log(response.message);
+                                    showMain();
+                                }
+                            })
+                            .catch((error) => console.error(error));
+                    }
+                });
+            }
+
             const btnAdd = document.getElementById('btn-add');
             btnAdd.addEventListener('click', () => {
                 showAdd();
             });
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.error(error));
 }
 
 // Fonction qui affiche le formulaire d'ajout
@@ -106,10 +135,11 @@ function showAdd() {
                 if (response.error) {
                     console.error(response.error);
                 } else {
-                    showMain(products);
+                    console.log(response.message);
+                    showMain();
                 }
             })
-            .catch((error) => alert(error));
+            .catch((error) => console.error(error));
     });
 }
 
@@ -119,7 +149,6 @@ function showUpdate(id) {
         .then((response) => response.json())
         .then((response) => {
             product = response.product;
-            console.log(product.name);
 
             // prettier-ignore
             container.innerHTML = `
@@ -168,13 +197,14 @@ function showUpdate(id) {
                         if (response.error) {
                             console.error(response.error);
                         } else {
+                            console.log(response.message);
                             showMain();
                         }
                     })
-                    .catch((error) => alert(error));
+                    .catch((error) => console.error(error));
             });
         })
-        .catch((error) => alert(error));
+        .catch((error) => console.error(error));
 }
 
 showMain();
