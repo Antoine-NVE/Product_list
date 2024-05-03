@@ -1,5 +1,20 @@
 const container = document.getElementById('container');
 
+function navigate() {
+    const path = window.location.hash.split('/');
+    path.shift();
+
+    if (path[0] === undefined || path[0] === '') {
+        showMain();
+    } else if (path[0] === 'create') {
+        showCreate();
+    } else if (path[0] === 'update') {
+        showUpdate(path[1]);
+    }
+}
+window.addEventListener('hashchange', navigate);
+window.addEventListener('DOMContentLoaded', navigate);
+
 // Fonction qui affiche la page d'accueil
 function showMain() {
     fetch('http://localhost:3000/api/products')
@@ -15,9 +30,9 @@ function showMain() {
                         <td>${products[i].price / 100} €</td>
                         <td>${products[i].quantity}</td>
                         <td>
-                            <button id="update-${i + 1}" class="btn btn-warning update" data-id="${products[i]._id}">
+                            <a href="#/update/${products[i]._id}" id="update-${i + 1}" class="btn btn-warning update" data-id="${products[i]._id}">
                                 Modifier
-                            </button>
+                            </a>
                             <button id="delete-${i + 1}" class="btn btn-danger delete" data-id="${products[i]._id}">
                                 Supprimer
                             </button>
@@ -39,19 +54,11 @@ function showMain() {
                     <tbody>
                         ${body}
                         <tr>
-                            <td colspan="4"><button id="btn-add" class="btn btn-primary w-100">Ajouter un produit</button></td>
+                            <td colspan="4"><a href="#/create" class="btn btn-primary w-100">Ajouter un produit</a></td>
                         </tr>
                     </tbody
                 </table>
             `;
-
-            const btnUpdate = document.getElementsByClassName('update');
-            for (let i = 0; i < btnUpdate.length; i++) {
-                const btn = document.getElementById(btnUpdate[i].id);
-                btn.addEventListener('click', () => {
-                    showUpdate(btn.dataset.id);
-                });
-            }
 
             const btnDelete = document.getElementsByClassName('delete');
             for (let i = 0; i < btnDelete.length; i++) {
@@ -71,26 +78,23 @@ function showMain() {
                                     console.error(response.error);
                                 } else {
                                     console.log(response.message);
-                                    showMain();
+
+                                    window.location.href = '#/';
+                                    navigate();
                                 }
                             })
                             .catch((error) => console.error(error));
                     }
                 });
             }
-
-            const btnAdd = document.getElementById('btn-add');
-            btnAdd.addEventListener('click', () => {
-                showAdd();
-            });
         })
         .catch((error) => console.error(error));
 }
 
 // Fonction qui affiche le formulaire d'ajout
-function showAdd() {
+function showCreate() {
     container.innerHTML = `
-        <button id="btn-main" class="btn btn-primary mb-3">Accueil</button>
+        <a href="#/" class="btn btn-primary mb-3">Accueil</a>
         <form>
             <div class="mb-3">
                 <label for="name" class="form-label">Nom</label>
@@ -107,11 +111,6 @@ function showAdd() {
             <button id="btn-create" class="btn btn-primary">Valider</button>
         </form>
     `;
-
-    const btnMain = document.getElementById('btn-main');
-    btnMain.addEventListener('click', () => {
-        showMain();
-    });
 
     const btnCreate = document.getElementById('btn-create');
     btnCreate.addEventListener('click', (e) => {
@@ -136,7 +135,8 @@ function showAdd() {
                     console.error(response.error);
                 } else {
                     console.log(response.message);
-                    showMain();
+
+                    window.location.href = '#/';
                 }
             })
             .catch((error) => console.error(error));
@@ -152,7 +152,7 @@ function showUpdate(id) {
 
             // prettier-ignore
             container.innerHTML = `
-            <button id="btn-main" class="btn btn-primary mb-3">Accueil</button>
+            <a href="#/" class="btn btn-primary mb-3">Accueil</a>
             <form>
                 <div class="mb-3">
                     <label for="name" class="form-label">Nom</label>
@@ -169,11 +169,6 @@ function showUpdate(id) {
                 <button id="btn-update" class="btn btn-primary">Valider</button>
             </form>
         `;
-
-            const btnMain = document.getElementById('btn-main');
-            btnMain.addEventListener('click', () => {
-                showMain();
-            });
 
             const btnUpdate = document.getElementById('btn-update');
             btnUpdate.addEventListener('click', (e) => {
@@ -198,7 +193,8 @@ function showUpdate(id) {
                             console.error(response.error);
                         } else {
                             console.log(response.message);
-                            showMain();
+
+                            window.location.href = '#/';
                         }
                     })
                     .catch((error) => console.error(error));
@@ -206,5 +202,3 @@ function showUpdate(id) {
         })
         .catch((error) => console.error(error));
 }
-
-showMain();
