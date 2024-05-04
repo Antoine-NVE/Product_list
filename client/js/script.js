@@ -18,79 +18,82 @@ window.addEventListener('hashchange', navigate);
 window.addEventListener('DOMContentLoaded', navigate);
 
 // Fonction qui affiche la page d'accueil
-function showMain() {
-    fetch('http://localhost:3000/api/products')
-        .then((response) => response.json())
-        .then((response) => {
-            const products = response.products;
-            let body = '';
-            for (let i = 0; i < products.length; i++) {
-                // prettier-ignore
-                body += `
-                    <tr>
-                        <td>${products[i].name}</td>
-                        <td>${products[i].price / 100} €</td>
-                        <td>${products[i].quantity}</td>
-                        <td>
-                            <a href="#/update/${products[i]._id}" id="update-${i + 1}" class="btn btn-warning update" data-id="${products[i]._id}">
-                                Modifier
-                            </a>
-                            <button id="delete-${i + 1}" class="btn btn-danger delete" data-id="${products[i]._id}">
-                                Supprimer
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }
+async function showMain() {
+    const product = new Product();
 
-            container.innerHTML = `
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Prix</th>
-                            <th>Quantité</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${body}
-                        <tr>
-                            <td colspan="4"><a href="#/create" class="btn btn-primary w-100">Ajouter un produit</a></td>
-                        </tr>
-                    </tbody
-                </table>
+    try {
+        const response = await product.readAll();
+        const products = response.products;
+
+        let body = '';
+        for (let i = 0; i < products.length; i++) {
+            // prettier-ignore
+            body += `
+                <tr>
+                    <td>${products[i].name}</td>
+                    <td>${products[i].price / 100} €</td>
+                    <td>${products[i].quantity}</td>
+                    <td>
+                        <a href="#/update/${products[i]._id}" id="update-${i + 1}" class="btn btn-warning update" data-id="${products[i]._id}">
+                            Modifier
+                        </a>
+                        <button id="delete-${i + 1}" class="btn btn-danger delete" data-id="${products[i]._id}">
+                            Supprimer
+                        </button>
+                    </td>
+                </tr>
             `;
+        }
 
-            const btnDelete = document.getElementsByClassName('delete');
-            for (let i = 0; i < btnDelete.length; i++) {
-                const btn = document.getElementById(btnDelete[i].id);
-                btn.addEventListener('click', () => {
-                    if (confirm('Supprimer ce produit ?')) {
-                        fetch(
-                            `http://localhost:3000/api/products/${btn.dataset.id}`,
-                            {
-                                method: 'DELETE',
-                                headers: { 'Content-Type': 'application/json' },
+        container.innerHTML = `
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${body}
+                    <tr>
+                        <td colspan="4"><a href="#/create" class="btn btn-primary w-100">Ajouter un produit</a></td>
+                    </tr>
+                </tbody
+            </table>
+        `;
+
+        const btnDelete = document.getElementsByClassName('delete');
+        for (let i = 0; i < btnDelete.length; i++) {
+            const btn = document.getElementById(btnDelete[i].id);
+            btn.addEventListener('click', () => {
+                if (confirm('Supprimer ce produit ?')) {
+                    fetch(
+                        `http://localhost:3000/api/products/${btn.dataset.id}`,
+                        {
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' },
+                        }
+                    )
+                        .then((response) => response.json())
+                        .then((response) => {
+                            if (response.error) {
+                                console.error(response.error);
+                            } else {
+                                console.log(response.message);
+
+                                window.location.href = '#/';
+                                navigate();
                             }
-                        )
-                            .then((response) => response.json())
-                            .then((response) => {
-                                if (response.error) {
-                                    console.error(response.error);
-                                } else {
-                                    console.log(response.message);
-
-                                    window.location.href = '#/';
-                                    navigate();
-                                }
-                            })
-                            .catch((error) => console.error(error));
-                    }
-                });
-            }
-        })
-        .catch((error) => console.error(error));
+                        })
+                        .catch((error) => console.error(error));
+                }
+            });
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 // Fonction qui affiche le formulaire d'ajout
@@ -115,25 +118,27 @@ function showCreate() {
     `;
 
     const btnCreate = document.getElementById('btn-create');
-    btnCreate.addEventListener('click', (e) => {
+    btnCreate.addEventListener('click', async (e) => {
         e.preventDefault();
 
         const product = new Product();
         product.setName(document.getElementById('name').value);
         product.setPrice(document.getElementById('price').value);
         product.setQuantity(document.getElementById('quantity').value);
-        product
-            .create()
-            .then((response) => {
-                if (response.error) {
-                    console.error(response.error);
-                } else {
-                    console.log(response.message);
 
-                    window.location.href = '#/';
-                }
-            })
-            .catch((error) => console.error(error));
+        try {
+            const response = await product.create();
+
+            if (response.error) {
+                console.error(response.error);
+            } else {
+                console.log(response.message);
+
+                window.location.href = '#/';
+            }
+        } catch (error) {
+            console.error(error);
+        }
     });
 }
 

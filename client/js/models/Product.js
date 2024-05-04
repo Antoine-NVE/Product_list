@@ -58,6 +58,16 @@ class Product {
             throw error;
         }
     }
+
+    async readAll() {
+        try {
+            const response = await fetch('http://localhost:3000/api/products/');
+
+            return await response.json();
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default Product;
