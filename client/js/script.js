@@ -1,4 +1,4 @@
-import Product from "./models/Product.js";
+import Product from './models/Product.js';
 
 const container = document.getElementById('container');
 
@@ -118,20 +118,12 @@ function showCreate() {
     btnCreate.addEventListener('click', (e) => {
         e.preventDefault();
 
-        const name = document.getElementById('name');
-        const price = document.getElementById('price');
-        const quantity = document.getElementById('quantity');
-
-        fetch('http://localhost:3000/api/products/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: name.value,
-                price: parseInt(price.value * 100),
-                quantity: parseInt(quantity.value),
-            }),
-        })
-            .then((response) => response.json())
+        const product = new Product();
+        product.setName(document.getElementById('name').value);
+        product.setPrice(document.getElementById('price').value);
+        product.setQuantity(document.getElementById('quantity').value);
+        product
+            .create()
             .then((response) => {
                 if (response.error) {
                     console.error(response.error);
@@ -150,7 +142,7 @@ function showUpdate(id) {
     fetch(`http://localhost:3000/api/products/${id}`)
         .then((response) => response.json())
         .then((response) => {
-            product = response.product;
+            const product = response.product;
 
             // prettier-ignore
             container.innerHTML = `

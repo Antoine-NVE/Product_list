@@ -37,6 +37,27 @@ class Product {
     getQuantity() {
         return this.#quantity;
     }
+
+    async create() {
+        try {
+            const response = await fetch(
+                'http://localhost:3000/api/products/',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: this.getName(),
+                        price: this.getprice() * 100,
+                        quantity: this.getQuantity(),
+                    }),
+                }
+            );
+
+            return await response.json();
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default Product;
