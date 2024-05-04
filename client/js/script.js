@@ -19,9 +19,8 @@ window.addEventListener('DOMContentLoaded', navigate);
 
 // Fonction qui affiche la page d'accueil
 async function showMain() {
-    const product = new Product();
-
     try {
+        const product = new Product();
         const response = await product.readAll();
         const products = response.products;
 
@@ -67,27 +66,23 @@ async function showMain() {
         const btnDelete = document.getElementsByClassName('delete');
         for (let i = 0; i < btnDelete.length; i++) {
             const btn = document.getElementById(btnDelete[i].id);
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 if (confirm('Supprimer ce produit ?')) {
-                    fetch(
-                        `http://localhost:3000/api/products/${btn.dataset.id}`,
-                        {
-                            method: 'DELETE',
-                            headers: { 'Content-Type': 'application/json' },
-                        }
-                    )
-                        .then((response) => response.json())
-                        .then((response) => {
-                            if (response.error) {
-                                console.error(response.error);
-                            } else {
-                                console.log(response.message);
+                    try {
+                        const product = new Product();
+                        product.setId(btn.dataset.id);
+                        const response = await product.delete();
+                        if (response.error) {
+                            console.error(response.error);
+                        } else {
+                            console.log(response.message);
 
-                                window.location.href = '#/';
-                                navigate();
-                            }
-                        })
-                        .catch((error) => console.error(error));
+                            window.location.href = '#/';
+                            navigate();
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
                 }
             });
         }
@@ -121,12 +116,11 @@ function showCreate() {
     btnCreate.addEventListener('click', async (e) => {
         e.preventDefault();
 
-        const product = new Product();
-        product.setName(document.getElementById('name').value);
-        product.setPrice(document.getElementById('price').value);
-        product.setQuantity(document.getElementById('quantity').value);
-
         try {
+            const product = new Product();
+            product.setName(document.getElementById('name').value);
+            product.setPrice(document.getElementById('price').value);
+            product.setQuantity(document.getElementById('quantity').value);
             const response = await product.create();
 
             if (response.error) {
@@ -143,61 +137,59 @@ function showCreate() {
 }
 
 // Fonction qui affiche le formulaire de modification
-function showUpdate(id) {
-    fetch(`http://localhost:3000/api/products/${id}`)
-        .then((response) => response.json())
-        .then((response) => {
-            const product = response.product;
+async function showUpdate(id) {
+    try {
+        const product = new Product();
+        product.setId(id);
+        const response = await product.readOne();
+        product.setName(response.product.name);
+        product.setPrice(response.product.price);
+        product.setQuantity(response.product.quantity);
 
-            // prettier-ignore
-            container.innerHTML = `
+        // prettier-ignore
+        container.innerHTML = `
             <a href="#/" class="btn btn-primary mb-3">Accueil</a>
             <form>
                 <div class="mb-3">
                     <label for="name" class="form-label">Nom</label>
-                    <input type="text" class="form-control" id="name" value="${product.name}">
+                    <input type="text" class="form-control" id="name" value="${product.getName()}">
                 </div>
                 <div class="mb-3">
                     <label for="price" class="form-label">Prix (€)</label>
-                    <input type="number" class="form-control" id="price" value="${product.price / 100}">
+                    <input type="number" class="form-control" id="price" value="${product.getPrice() / 100}">
                 </div>
                 <div class="mb-3">
                     <label for="quantity" class="form-label">Quantité</label>
-                    <input type="number" class="form-control" id="quantity" value="${product.quantity}">
+                    <input type="number" class="form-control" id="quantity" value="${product.getQuantity()}">
                 </div>
                 <button id="btn-update" class="btn btn-primary">Valider</button>
             </form>
         `;
 
-            const btnUpdate = document.getElementById('btn-update');
-            btnUpdate.addEventListener('click', (e) => {
-                e.preventDefault();
+        const btnUpdate = document.getElementById('btn-update');
+        btnUpdate.addEventListener('click', async (e) => {
+            e.preventDefault();
 
-                const name = document.getElementById('name');
-                const price = document.getElementById('price');
-                const quantity = document.getElementById('quantity');
+            try {
+                const product = new Product();
+                product.setId(id);
+                product.setName(document.getElementById('name').value);
+                product.setPrice(document.getElementById('price').value);
+                product.setQuantity(document.getElementById('quantity').value);
+                const response = await product.update();
 
-                fetch(`http://localhost:3000/api/products/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: name.value,
-                        price: parseInt(price.value * 100),
-                        quantity: parseInt(quantity.value),
-                    }),
-                })
-                    .then((response) => response.json())
-                    .then((response) => {
-                        if (response.error) {
-                            console.error(response.error);
-                        } else {
-                            console.log(response.message);
+                if (response.error) {
+                    console.error(response.error);
+                } else {
+                    console.log(response.message);
 
-                            window.location.href = '#/';
-                        }
-                    })
-                    .catch((error) => console.error(error));
-            });
-        })
-        .catch((error) => console.error(error));
+                    window.location.href = '#/';
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    } catch (error) {
+        console.error(error);
+    }
 }

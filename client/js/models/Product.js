@@ -26,7 +26,7 @@ class Product {
         this.#price = price;
     }
 
-    getprice() {
+    getPrice() {
         return this.#price;
     }
 
@@ -47,7 +47,7 @@ class Product {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         name: this.getName(),
-                        price: this.getprice() * 100,
+                        price: this.getPrice() * 100,
                         quantity: this.getQuantity(),
                     }),
                 }
@@ -62,6 +62,55 @@ class Product {
     async readAll() {
         try {
             const response = await fetch('http://localhost:3000/api/products/');
+
+            return await response.json();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async readOne() {
+        try {
+            const response = await fetch(
+                `http://localhost:3000/api/products/${this.getId()}`
+            );
+
+            return await response.json();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async update() {
+        try {
+            const response = await fetch(
+                `http://localhost:3000/api/products/${this.getId()}`,
+                {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: this.getName(),
+                        price: this.getPrice() * 100,
+                        quantity: this.getQuantity(),
+                    }),
+                }
+            );
+
+            return await response.json();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async delete() {
+        try {
+            const response = await fetch(
+                `http://localhost:3000/api/products/${this.getId()}`,
+                {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                }
+            );
 
             return await response.json();
         } catch (error) {
