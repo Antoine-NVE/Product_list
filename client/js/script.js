@@ -1,3 +1,5 @@
+import Product from "./models/Product.js";
+
 const container = document.getElementById('container');
 
 function navigate() {
@@ -20,7 +22,7 @@ function showMain() {
     fetch('http://localhost:3000/api/products')
         .then((response) => response.json())
         .then((response) => {
-            products = response.products;
+            const products = response.products;
             let body = '';
             for (let i = 0; i < products.length; i++) {
                 // prettier-ignore
