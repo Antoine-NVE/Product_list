@@ -2,18 +2,20 @@ export function showMain(products) {
     const container = document.getElementById('container');
 
     container.innerHTML = `
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Prix</th>
-                    <th>Quantité</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="tbody">
-            </tbody
-        </table>
+        <div class="col-12 mt-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody
+            </table>
+        </div>
     `;
 
     let body = '';
@@ -49,22 +51,24 @@ export function showCreate() {
     const container = document.getElementById('container');
 
     container.innerHTML = `
-        <a href="#/" class="btn btn-primary mb-3">Accueil</a>
-        <form>
-            <div class="mb-3">
-                <label for="name" class="form-label">Nom</label>
-                <input type="text" class="form-control" id="name">
-            </div>
-            <div class="mb-3">
-                <label for="price" class="form-label">Prix (€)</label>
-                <input type="number" class="form-control" id="price">
-            </div>
-            <div class="mb-3">
-                <label for="quantity" class="form-label">Quantité</label>
-                <input type="number" class="form-control" id="quantity">
-            </div>
-            <button id="btn-create" class="btn btn-primary">Valider</button>
-        </form>
+        <div class="col-12 mt-3">
+            <a href="#/" class="btn btn-primary mb-3">Accueil</a>
+            <form>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <input type="text" class="form-control" id="name">
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Prix (€)</label>
+                    <input type="number" class="form-control" id="price">
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantité</label>
+                    <input type="number" class="form-control" id="quantity">
+                </div>
+                <button id="btn-create" class="btn btn-primary">Valider</button>
+            </form>
+        </div>
     `;
 }
 
@@ -73,21 +77,23 @@ export function showUpdate(product) {
 
     // prettier-ignore
     container.innerHTML = `
-        <a href="#/" class="btn btn-primary mb-3">Accueil</a>
-        <form>
-            <div class="mb-3">
-                <label for="name" class="form-label">Nom</label>
-                <input type="text" class="form-control" id="name" value="${product.getName()}">
-            </div>
-            <div class="mb-3">
-                <label for="price" class="form-label">Prix (€)</label>
-                <input type="number" class="form-control" id="price" value="${product.getPrice() / 100}">
-            </div>
-            <div class="mb-3">
-                <label for="quantity" class="form-label">Quantité</label>
-                <input type="number" class="form-control" id="quantity" value="${product.getQuantity()}">
-            </div>
-            <button id="btn-update" class="btn btn-primary">Valider</button>
-        </form>
+        <div class="col-12 mt-3">
+            <a href="#/" class="btn btn-primary mb-3">Accueil</a>
+            <form>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <input type="text" class="form-control" id="name" value="${product.getName()}">
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Prix (€)</label>
+                    <input type="number" class="form-control" id="price" value="${product.getPrice() / 100}">
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantité</label>
+                    <input type="number" class="form-control" id="quantity" value="${product.getQuantity()}">
+                </div>
+                <button id="btn-update" class="btn btn-primary">Valider</button>
+            </form>
+        </div>
     `;
 }
